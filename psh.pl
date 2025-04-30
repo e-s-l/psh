@@ -72,7 +72,7 @@ sub complete {
 sub loop {
 
 	my $line;			# the user input
-	my @args;			# the user input split
+	my @args;			# the user input, split
 	my $status = 1;		# whether we keep running or not..
 
 	# set-up the readline
