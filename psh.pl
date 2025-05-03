@@ -17,16 +17,28 @@ use Term::ReadLine;							# the readline functionality
 #################
 # the built-ins #
 #################
-#
+# the cmds that must be run in the parent process to make any sense
 # builtins can be special (required) or regular (standard)
 # run `type cmd` to find whether a cmd is builtin.
 
+# the hash which we look in later
+my %builtins = (
+	exit  => \&psh_exit,
+	bye   => \&psh_exit,
+	cd    => \&psh_cd,
+	chdir => \&psh_cd,
+	help  => \&psh_help,
+);
 
+# the function definitions
+
+# exit the shell
 sub psh_exit {
 	print("later alligator\n");
 	return 0;
 }
 
+# change directory
 sub psh_cd {
 	if(!chdir $_[1]) {
 		warn("$!");
@@ -34,11 +46,13 @@ sub psh_cd {
 	return 1;
 }
 
+# print a help message
 sub psh_help {
 	print("a silly little shell written in perl.");
 }
 
 # what other builtins will be nice to have and to difficult to implement?
+# for fun & learning lets do pwd and echo...
 
 ################
 # the executor #
@@ -48,15 +62,6 @@ sub psh_help {
 sub psh_execute {
 
 	my @args = @_;
-
-	# the cmds that must be run in the parent process to make any sense
-	my %builtins = (
-		exit  => \&psh_exit,
-		bye   => \&psh_exit,
-		cd    => \&psh_cd,
-		chdir => \&psh_cd,
-		help  => \&psh_help,
-	);
 
 	if (exists $builtins{$args[0]}) {
 		return $builtins{$args[0]}->(@args);
@@ -76,10 +81,13 @@ sub psh_launch {
 		die("$!");
 	} elsif ($pid == 0) {
 		# the child:
+		
 		exec(@_) or exit();
 		# do we need to catch output so should we use open() instead of exec()?
 	} else {
 		# the parent:
+
+		# if not a background process then
 		waitpid($pid, 0);
 	}
 
@@ -101,6 +109,13 @@ sub complete {
 	my ($text, $start, $end) = @_;
 	return grep { /^$text/ } (glob('*'));
 }
+
+# wildcard handling
+#...
+
+# send to the bg
+# if the input starts with 'bg' or ends with '&'
+# then don't wait for the exec
 
 ########
 # main #
@@ -138,6 +153,7 @@ sub loop {
 
 		if ($line =~ /\S/) {			# if line is non-whitespace
 			chomp($line);				# clean up new line characters
+
 			$term->addhistory($line) if $line !~ /\S||\n/;
 
 			# the parser:
@@ -149,6 +165,9 @@ sub loop {
 			#foreach my $arg (@args) {
 			#	print($arg."\n");
 			#}
+			###
+			# so shellwords will split and capture pipes, redirects, bgs...
+			# so it's up to us to do the right things with these...
 			###
 
 			# the executor:
