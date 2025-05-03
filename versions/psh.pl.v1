@@ -1,27 +1,13 @@
-#! /usr/bin/env perl
+# /usr/bin/env perl
 
 use strict;
 use warnings;
 
-use Text::ParseWords qw(shellwords);		# effectively our parser
-use Term::ReadLine;							# the readline functionality
-
-#
-# see
-# https://stackoverflow.com/questions/13332908/termreadline-i-need-to-hit-the-up-arrow-twice-to-retrieve-history
-# for a necessary hack fix to this readline implementation
-#
-# can/will shellwords handle the pipes & redirects?
-# 
-
-#################
-# the built-ins #
-#################
-#
-# builtins can be special (required) or regular (standard)
-# run `type cmd` to find whether a cmd is builtin.
+use Text::ParseWords qw(shellwords);
+use Term::ReadLine;
 
 
+# the built-in commands:
 sub psh_exit {
 	print("later alligator\n");
 	return 0;
@@ -38,35 +24,7 @@ sub psh_help {
 	print("a silly little shell written in perl.");
 }
 
-# what other builtins will be nice to have and to difficult to implement?
-
-################
-# the executor #
-################
-
 # the functions to run the commands (builtin or otherwise):
-sub psh_execute {
-
-	my @args = @_;
-
-	# the cmds that must be run in the parent process to make any sense
-	my %builtins = (
-		exit  => \&psh_exit,
-		bye   => \&psh_exit,
-		cd    => \&psh_cd,
-		chdir => \&psh_cd,
-		help  => \&psh_help,
-	);
-
-	if (exists $builtins{$args[0]}) {
-		return $builtins{$args[0]}->(@args);
-	}
-
-	# if not in the builtins, we reach here
-	return psh_launch(@args);
-}
-
-# to run the simple commands
 sub psh_launch {
 
 	my $pid;
@@ -77,7 +35,6 @@ sub psh_launch {
 	} elsif ($pid == 0) {
 		# the child:
 		exec(@_) or exit();
-		# do we need to catch output so should we use open() instead of exec()?
 	} else {
 		# the parent:
 		waitpid($pid, 0);
@@ -86,15 +43,24 @@ sub psh_launch {
 	return 1;
 }
 
-#
-# FIXME 
-# need to implement pipes & redirects & backgrounding...
-# ie other processes besides simple commands & builtins.
-#
+sub psh_execute {
 
-##############
-# subsystems #
-##############
+	my @args = @_;
+
+	# the cmds that must be run in the parent process to make any sense
+	my %builtins = (
+		exit => \&psh_exit,
+		cd   => \&psh_cd,
+		help => \&psh_help,
+	);
+
+	if (exists $builtins{$args[0]}) {
+		return $builtins{$args[0]}->(@args);
+	}
+
+	# if not in the builtins, we reach here
+	return psh_launch(@args);
+}
 
 # to enable tab-completion of file names in pwd:
 sub complete {
@@ -102,18 +68,11 @@ sub complete {
 	return grep { /^$text/ } (glob('*'));
 }
 
-########
-# main #
-########
-
 # the loop to read in from the shell:
 sub loop {
 
 	my $line;			# the user input
-
-	# the command table:
 	my @args;			# the user input, split
-
 	my $status = 1;		# whether we keep running or not..
 
 	# set-up the readline
@@ -138,20 +97,11 @@ sub loop {
 
 		if ($line =~ /\S/) {			# if line is non-whitespace
 			chomp($line);				# clean up new line characters
-			$term->addhistory($line) if $line !~ /\S||\n/;
+			$term->addhistory($line);
 
-			# the parser:
 			# split the line using usual shell structures
 			@args = shellwords($line);
 
-			###
-			# a debug
-			#foreach my $arg (@args) {
-			#	print($arg."\n");
-			#}
-			###
-
-			# the executor:
 			$status = psh_execute(@args);
 		}
 	} while $status;
@@ -160,7 +110,8 @@ sub loop {
 sub main {
 
 	# clear the screen
-	system("clear");
+	print("\e[2J\e[H");
+	STDOUT->flush();
 
 	# main loop
 	loop();
