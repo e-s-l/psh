@@ -9,7 +9,7 @@ use Term::ReadLine;							# the readline functionality
 #
 # see
 # https://stackoverflow.com/questions/13332908/termreadline-i-need-to-hit-the-up-arrow-twice-to-retrieve-history
-# for a necessary hack fix to this readline implementation
+# for a necessary hack to fix this readline implementation
 #
 # can/will shellwords handle the pipes & redirects?
 # 
@@ -51,8 +51,16 @@ sub psh_help {
 	print("a silly little shell written in perl.");
 }
 
-# what other builtins will be nice to have and to difficult to implement?
+# what other builtins will be nice to have and not too difficult to implement?
 # for fun & learning lets do pwd and echo...
+
+#####################
+
+# some superfluous colouring
+my $green = "\e[32m";
+my $cyan = "\e[36m";
+my $bold = "\e[1m";
+my $reset = "\e[0m";
 
 ################
 # the executor #
@@ -71,7 +79,7 @@ sub psh_execute {
 	return psh_launch(@args);
 }
 
-# to run the simple commands
+# to run the simple (non-built-in, to-be-child) commands
 sub psh_launch {
 
 	my $pid;
@@ -81,7 +89,7 @@ sub psh_launch {
 		die("$!");
 	} elsif ($pid == 0) {
 		# the child:
-		
+
 		exec(@_) or exit();
 		# do we need to catch output so should we use open() instead of exec()?
 	} else {
@@ -117,9 +125,9 @@ sub complete {
 # if the input starts with 'bg' or ends with '&'
 # then don't wait for the exec
 
-########
-# main #
-########
+####################
+# main subroutines #
+####################
 
 # the loop to read in from the shell:
 sub loop {
@@ -135,14 +143,8 @@ sub loop {
 	my $term = Term::ReadLine->new('psh');
 	$term->Attribs->{completion_function} = \&complete;
 
-	# some superfluous colouring
-	my $green = "\e[32m";
-	my $cyan = "\e[36m";
-	my $bold = "\e[1m";
-	my $reset = "\e[0m";
-
 	# define the prompt
-	my $prompt = "$cyan$bold> $reset$green$bold";
+	my $prompt = "$cyan$bold> $reset$green";
 
 	do {
 		# display the prompt
@@ -181,11 +183,62 @@ sub main {
 	# clear the screen
 	system("clear");
 
+	# an unnecessary welcome message
+	show_welcome();
+
 	# main loop
 	loop();
 	
 	# exit successfully
 	return;
+}
+
+#######################
+# an annoying welcome #
+#######################
+
+sub show_welcome {
+
+	# could be implement some kind of concurrency here?
+	# so that prompt is available while animatiom plays...
+
+	my $user = $ENV{USER} || getpwuid($<);
+	my $string = "welcome, $user, to p-shell!";
+	my $breaker = "-" x length($string);
+
+	print("$green$bold");
+	print("$breaker\n");	# or weasel_print?
+	weasel_print($string);
+	print("$breaker\n");	# or weasel_print?
+	print("$reset");
+}
+
+sub weasel_print {
+
+    $| = 1; 										#enable stdout autoflush
+    my $speed = 0.005; 								# sleep interval
+    my $destination = shift @_ || die("No input");  # the final sentence
+    my $sentence = "";								# place holder
+
+    # all printable ascii characters (including spaces):
+    my @chars = map { chr($_) } (32..126);
+
+    # create initial string of random characters
+    for(my $i = 0; $i < length($destination); ++$i) {
+        substr($sentence, $i, 1) = $chars[rand @chars];
+    }
+
+	# generate an 'animation':
+    while ($sentence ne $destination) {
+        for(my $i = 0; $i < length($destination); ++$i) {
+            if (substr($destination, $i ,1) ne substr($sentence, $i, 1)) {
+                substr($sentence, $i, 1) = $chars[rand @chars];
+            }
+        }
+        print("$sentence\r");
+        select(undef, undef, undef, $speed);		# sleep, decimal seconds
+    }
+    print("$sentence\n");
 }
 
 main();
