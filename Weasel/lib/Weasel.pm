@@ -60,7 +60,9 @@ sub weasel_print {
 1;
 __END__
 
-# POD...
+#######
+# POD #
+#######
 
 =head1 NAME
 
@@ -69,7 +71,6 @@ Weasel - Perl program to print an animation, of sorts.
 =head1 SYNOPSIS
 
   use Weasel;
-  blah blah blah
 
 =head1 DESCRIPTION
 
@@ -88,6 +89,5 @@ Copyright (C) 2025 by Pearl Lee
 This library is free software; you can redistribute it and/or modify
 it under the same terms as Perl itself, either Perl version 5.36.0 or,
 at your option, any later version of Perl 5 you may have available.
-
 
 =cut
