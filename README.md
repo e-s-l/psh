@@ -22,10 +22,6 @@ Included an annoying welcome message which is implmeneted by a 'weasel'
 animation (it's not actually an implementation of the dawkin's weasel
 evolutionary program but has some similiarity).
 
-
-
-
-
 ### Structure
 
 - ...
@@ -52,6 +48,13 @@ evolutionary program but has some similiarity).
 ## The Theory
 
 To copy across from a obsidian note when that's fleshed out.
+
+
+***********
+
+## Weasel
+
+Had a crack at implementing this as a module.
 
 
 ***********
