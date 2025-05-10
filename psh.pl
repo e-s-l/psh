@@ -6,13 +6,14 @@ use warnings;
 use Text::ParseWords qw(shellwords);		# effectively our parser
 use Term::ReadLine;							# the readline functionality
 
+# custom module to
+use Weasel;
+
 #
 # see
 # https://stackoverflow.com/questions/13332908/termreadline-i-need-to-hit-the-up-arrow-twice-to-retrieve-history
 # for a necessary hack to fix this readline implementation
 #
-# can/will shellwords handle the pipes & redirects?
-# 
 
 #################
 # the built-ins #
@@ -193,9 +194,9 @@ sub main {
 	return;
 }
 
-#######################
-# an annoying welcome #
-#######################
+########################
+# an unwelcome welcome #
+########################
 
 sub show_welcome {
 
@@ -208,37 +209,11 @@ sub show_welcome {
 
 	print("$green$bold");
 	print("$breaker\n");	# or weasel_print?
-	weasel_print($string);
+	Weasel::weasel_print($string);
 	print("$breaker\n");	# or weasel_print?
 	print("$reset");
 }
 
-sub weasel_print {
-
-    $| = 1; 										#enable stdout autoflush
-    my $speed = 0.005; 								# sleep interval
-    my $destination = shift @_ || die("No input");  # the final sentence
-    my $sentence = "";								# place holder
-
-    # all printable ascii characters (including spaces):
-    my @chars = map { chr($_) } (32..126);
-
-    # create initial string of random characters
-    for(my $i = 0; $i < length($destination); ++$i) {
-        substr($sentence, $i, 1) = $chars[rand @chars];
-    }
-
-	# generate an 'animation':
-    while ($sentence ne $destination) {
-        for(my $i = 0; $i < length($destination); ++$i) {
-            if (substr($destination, $i ,1) ne substr($sentence, $i, 1)) {
-                substr($sentence, $i, 1) = $chars[rand @chars];
-            }
-        }
-        print("$sentence\r");
-        select(undef, undef, undef, $speed);		# sleep, decimal seconds
-    }
-    print("$sentence\n");
-}
+######
 
 main();

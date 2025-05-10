@@ -16,6 +16,16 @@ In the end:
 
 ## The Program
 
+Follows a minimal shell structure.
+
+Included an annoying welcome message which is implmeneted by a 'weasel'
+animation (it's not actually an implementation of the dawkin's weasel
+evolutionary program but has some similiarity).
+
+
+
+
+
 ### Structure
 
 - ...
