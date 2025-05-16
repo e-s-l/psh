@@ -29,9 +29,18 @@ my %builtins = (
 	cd    => \&psh_cd,
 	chdir => \&psh_cd,
 	help  => \&psh_help,
+	printenv => \&psh_printenv,
 );
 
 # the function definitions
+
+# print environment variables
+sub psh_printenv {
+	foreach my $key (sort keys %ENV) {
+		print("$key=$ENV{$key}}\n");
+	}
+	return 1;
+}
 
 # exit the shell
 sub psh_exit {
@@ -54,6 +63,7 @@ sub psh_help {
 
 # what other builtins will be nice to have and not too difficult to implement?
 # for fun & learning lets do pwd and echo...
+# mv, rm, see learning perl chapter
 
 #####################
 
