@@ -5,8 +5,9 @@ use warnings;
 
 use Text::ParseWords qw(shellwords);		# effectively our parser
 use Term::ReadLine;							# the readline functionality
+use Cwd;									# for pwd builting
 
-# custom module to
+# custom module to print an animated welcome message
 use Weasel;
 
 #
@@ -30,18 +31,12 @@ my %builtins = (
 	cd    => \&psh_cd,
 	chdir => \&psh_cd,
 	help  => \&psh_help,
+	pwd   => \&psh_pwd,
+	echo  => \&psh_echo,
 	printenv => \&psh_printenv,
 );
 
 # the function definitions
-
-# print environment variables
-sub psh_printenv {
-	foreach my $key (sort keys %ENV) {
-		print("$key=$ENV{$key}}\n");
-	}
-	return 1;
-}
 
 # exit the shell
 sub psh_exit {
