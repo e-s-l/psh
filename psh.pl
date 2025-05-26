@@ -32,9 +32,17 @@ my %builtins = (
 	help  => \&psh_help,
 	pwd   => \&psh_pwd,
 	echo  => \&psh_echo,
+	printenv => \&psh_printev
 );
 
 # the function definitions
+
+sub psh_printenv {
+	foreach my $key (sort keys %ENV) {
+		print("$key=$ENV{$key}\n");
+	}
+	return 1;
+}
 
 # FIXME
 sub psh_echo {
