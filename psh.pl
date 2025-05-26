@@ -18,6 +18,7 @@ use Weasel;
 #################
 # the built-ins #
 #################
+
 # the cmds that must be run in the parent process to make any sense
 # builtins can be special (required) or regular (standard)
 # run `type cmd` to find whether a cmd is builtin.
@@ -167,7 +168,7 @@ sub loop {
 		if ($line =~ /\S/) {			# if line is non-whitespace
 			chomp($line);				# clean up new line characters
 
-			$term->addhistory($line) if $line !~ /\S||\n/;
+			$term->addhistory($line) if $line !~ /\S||\n/; # pretty sure this should be lower case s
 
 			# the parser:
 			# split the line using usual shell structures
