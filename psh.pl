@@ -19,6 +19,7 @@ use Weasel;
 #################
 # the built-ins #
 #################
+
 # the cmds that must be run in the parent process to make any sense
 # builtins can be special (required) or regular (standard)
 # run `type cmd` to find whether a cmd is builtin.
@@ -32,11 +33,16 @@ my %builtins = (
 	help  => \&psh_help,
 	pwd   => \&psh_pwd,
 	echo  => \&psh_echo,
+<<<<<<< HEAD
 	printenv => \&psh_printev
+=======
+	printenv => \&psh_printenv,
+>>>>>>> more_builtins
 );
 
 # the function definitions
 
+<<<<<<< HEAD
 sub psh_printenv {
 	foreach my $key (sort keys %ENV) {
 		print("$key=$ENV{$key}\n");
@@ -55,6 +61,8 @@ sub psh_pwd {
 	return 1;
 }
 
+=======
+>>>>>>> more_builtins
 # exit the shell
 sub psh_exit {
 	print("later alligator\n");
@@ -76,6 +84,7 @@ sub psh_help {
 
 # what other builtins will be nice to have and not too difficult to implement?
 # for fun & learning lets do pwd and echo...
+# mv, rm, see learning perl chapter
 
 #####################
 
@@ -179,7 +188,7 @@ sub loop {
 		if ($line =~ /\S/) {			# if line is non-whitespace
 			chomp($line);				# clean up new line characters
 
-			$term->addhistory($line) if $line !~ /\S||\n/;
+			$term->addhistory($line) if $line !~ /\S||\n/; # pretty sure this should be lower case s
 
 			# the parser:
 			# split the line using usual shell structures
