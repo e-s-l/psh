@@ -5,8 +5,9 @@ use warnings;
 
 use Text::ParseWords qw(shellwords);		# effectively our parser
 use Term::ReadLine;							# the readline functionality
+use Cwd;									# for pwd builting
 
-# custom module to
+# custom module to print an animated welcome message
 use Weasel;
 
 #
@@ -29,9 +30,22 @@ my %builtins = (
 	cd    => \&psh_cd,
 	chdir => \&psh_cd,
 	help  => \&psh_help,
+	pwd   => \&psh_pwd,
+	echo  => \&psh_echo,
 );
 
 # the function definitions
+
+# FIXME
+sub psh_echo {
+	print("sooon\n");
+	return 1;
+}
+
+sub psh_pwd {
+	print Cwd::getcwd() . "\n";
+	return 1;
+}
 
 # exit the shell
 sub psh_exit {
