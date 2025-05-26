@@ -33,16 +33,11 @@ my %builtins = (
 	help  => \&psh_help,
 	pwd   => \&psh_pwd,
 	echo  => \&psh_echo,
-<<<<<<< HEAD
-	printenv => \&psh_printev
-=======
-	printenv => \&psh_printenv,
->>>>>>> more_builtins
+	printenv => \&psh_printenv
 );
 
 # the function definitions
 
-<<<<<<< HEAD
 sub psh_printenv {
 	foreach my $key (sort keys %ENV) {
 		print("$key=$ENV{$key}\n");
@@ -61,8 +56,6 @@ sub psh_pwd {
 	return 1;
 }
 
-=======
->>>>>>> more_builtins
 # exit the shell
 sub psh_exit {
 	print("later alligator\n");

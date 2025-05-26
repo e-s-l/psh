@@ -1,1 +1,6 @@
 **versions
+# perl package things
+**MYMETA*
+**Makefile
+**blib
+**pm_to_blib
