@@ -33,10 +33,37 @@ my %builtins = (
 	help  => \&psh_help,
 	pwd   => \&psh_pwd,
 	echo  => \&psh_echo,
-	printenv => \&psh_printenv
+	printenv => \&psh_printenv,
+	cat   => \&psh_cat,
+	tac   => \&psh_tac,
 );
 
 # the function definitions
+
+# TODO
+# ls
+# mv
+# rm
+# cat
+# tac
+
+sub psh_cat {
+	shift;
+	@ARGV = @_; 
+	print <>;
+	print "meow\n";
+	return 1;
+}
+
+sub psh_tac {
+	shift;
+	foreach my $a (@_) {
+		open(my $fh, $a);
+		my @in = <$fh>;
+		print reverse @in;
+	}
+	return 1;
+}
 
 sub psh_printenv {
 	foreach my $key (sort keys %ENV) {
@@ -64,7 +91,9 @@ sub psh_exit {
 
 # change directory
 sub psh_cd {
-	if(!chdir $_[1]) {
+	#print;
+	shift;
+	if(!chdir $_[0]) {
 		warn("$!");
 	}
 	return 1;
@@ -95,9 +124,18 @@ my $reset = "\e[0m";
 sub psh_execute {
 
 	my @args = @_;
+	
+	#print("args = " . @args. "\n");
+	
+	my $cmd = $args[0];
 
-	if (exists $builtins{$args[0]}) {
-		return $builtins{$args[0]}->(@args);
+	#print("cmd = ".$cmd."\n");
+	
+	#shift(@args);
+
+	if (exists $builtins{$cmd}) {
+		# dereference the builtin & pass the args sans the cmd
+		return $builtins{$cmd}->(@args);
 	}
 
 	# if not in the builtins, we reach here
@@ -114,7 +152,6 @@ sub psh_launch {
 		die("$!");
 	} elsif ($pid == 0) {
 		# the child:
-
 		exec(@_) or exit();
 		# do we need to catch output so should we use open() instead of exec()?
 	} else {
@@ -169,7 +206,7 @@ sub loop {
 	$term->Attribs->{completion_function} = \&complete;
 
 	# define the prompt
-	my $prompt = "$cyan$bold> $reset$green";
+	my $prompt = "$cyan$bold>$reset $green";
 
 	do {
 		# display the prompt
