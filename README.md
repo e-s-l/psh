@@ -13,8 +13,18 @@ In the end:
 
     - perl packages make it almost trivial,
     - got caught up in perl function references...
+	- but had fun implementing the built-ins.
 
 ## The Program
+
+### set-up
+
+You need to add via your package manager `perl-TermReadLine-Gnu`, probably, for
+the up-for-history functionality.
+
+Weasel is optional, and perhaps ill-advised.
+
+### about
 
 Follows a minimal shell structure.
 
@@ -24,12 +34,16 @@ evolutionary program but has some similiarity).
 
 ### Structure
 
-- ...
+- Tried to apply something of the proper structure of a terminal, see the
+  accompanying notes.
+
+********************
 
 ### TODO
 
-- create a command table
+- create a command table... have sort of done this with the builtins hash...
 - subsystems
+- flags and wildcards can be implemented by arent...
 
 #### wildcards
 

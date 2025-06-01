@@ -7,9 +7,6 @@ use Text::ParseWords qw(shellwords);		# effectively our parser
 use Term::ReadLine;							# the readline functionality
 use Cwd;									# for pwd builting
 
-# custom module to print an animated welcome message
-use Weasel;
-
 #
 # see
 # https://stackoverflow.com/questions/13332908/termreadline-i-need-to-hit-the-up-arrow-twice-to-retrieve-history
@@ -38,6 +35,7 @@ my %builtins = (
 	tac			=> \&psh_tac,
 	mv			=> \&psh_mv,
 	rm			=> \&psh_rm,
+	ls			=> \&psh_ls,
 );
 
 # the function definitions
@@ -47,6 +45,18 @@ my %builtins = (
 # ls
 #
 # the fixmes...
+
+
+sub psh_ls {
+
+	### FIXME
+	# only <.*> if -a
+	
+	foreach my $f (<* .*>) {
+		print "$f\n";
+	}
+	return 1;
+}
 
 #
 sub psh_rm {
@@ -288,6 +298,9 @@ sub main {
 ########################
 
 sub show_welcome {
+	
+	# a custom module (see installion notes therein)
+	use Weasel;
 
 	# could be implement some kind of concurrency here?
 	# so that prompt is available while animatiom plays...
