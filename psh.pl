@@ -26,26 +26,53 @@ use Weasel;
 
 # the hash which we look in later
 my %builtins = (
-	exit  => \&psh_exit,
-	bye   => \&psh_exit,
-	cd    => \&psh_cd,
-	chdir => \&psh_cd,
-	help  => \&psh_help,
-	pwd   => \&psh_pwd,
-	echo  => \&psh_echo,
-	printenv => \&psh_printenv,
-	cat   => \&psh_cat,
-	tac   => \&psh_tac,
+	exit		=> \&psh_exit,
+	bye			=> \&psh_exit,
+	cd			=> \&psh_cd,
+	chdir		=> \&psh_cd,
+	help		=> \&psh_help,
+	pwd			=> \&psh_pwd,
+	echo		=> \&psh_echo,
+	printenv	=> \&psh_printenv,
+	cat			=> \&psh_cat,
+	tac			=> \&psh_tac,
+	mv			=> \&psh_mv,
+	rm			=> \&psh_rm,
 );
 
 # the function definitions
 
-# TODO
+### TODO
+# built-ins:
 # ls
-# mv
-# rm
-# cat
-# tac
+#
+# the fixmes...
+
+#
+sub psh_rm {
+	shift;
+	print @_;
+	unlink @_;
+	return 1;
+}
+
+sub psh_mv {
+	shift;
+
+	my ($org, $dest) = @_;
+		
+	print "file not found\n" unless (-e $org);
+
+	if (-d $dest) {
+		my $base = $org;
+		# sub out the head part of the directory
+		$org =~ s#.*/##;
+		$dest .= "/$base";
+	}
+
+	rename($org, $dest) || print("problem while moving");
+	return 1;
+}
 
 sub psh_cat {
 	shift;
@@ -74,7 +101,8 @@ sub psh_printenv {
 
 # FIXME
 sub psh_echo {
-	print("sooon\n");
+	shift;
+	print("@_\n");
 	return 1;
 }
 
