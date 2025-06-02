@@ -13,7 +13,7 @@ our @ISA = qw(Exporter);
 # names by default without a very good reason. Use EXPORT_OK instead.
 # Do not simply export all your public functions/methods/constants.
 
-# This allows declaration	use Weasel ':all';
+# This allows declaration   use Weasel ':all';
 # If you do not need this, moving things directly into @EXPORT or @EXPORT_OK
 # will save memory.
 our %EXPORT_TAGS = ( 'all' => [ qw(
@@ -22,17 +22,17 @@ our %EXPORT_TAGS = ( 'all' => [ qw(
 our @EXPORT_OK = ( @{ $EXPORT_TAGS{'all'} } );
 
 our @EXPORT = qw(
-weasel_print	
+    weasel_print
 );
 
 our $VERSION = '0.01';
 
 sub weasel_print {
 
-    $| = 1; 						# enable stdout autoflush
-    my $speed = 0.005; 					# sleep interval
-    my $destination = shift @_ || die("No input");  	# the final sentence
-    my $sentence = "";					# place holder
+    $| = 1;                         # enable stdout autoflush
+    my $speed = 0.005;                  # sleep interval
+    my $destination = shift @_ || die("No input");      # the final sentence
+    my $sentence = "";                  # place holder
 
     # all printable ascii characters (including spaces):
     my @chars = map { chr($_) } (32..126);
@@ -42,7 +42,7 @@ sub weasel_print {
         substr($sentence, $i, 1) = $chars[rand @chars];
     }
 
-	# generate an 'animation':
+    # generate an 'animation':
     while ($sentence ne $destination) {
         for(my $i = 0; $i < length($destination); ++$i) {
             if (substr($destination, $i ,1) ne substr($sentence, $i, 1)) {
@@ -50,7 +50,7 @@ sub weasel_print {
             }
         }
         print("$sentence\r");
-        select(undef, undef, undef, $speed);		# sleep, decimal seconds
+        select(undef, undef, undef, $speed);        # sleep, decimal seconds
     }
     print("$sentence\n");
 }
